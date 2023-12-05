@@ -15,6 +15,142 @@ TEST(UrlParserTest, ParseUrl) {
     EXPECT_EQ(parser.getFragment(), "fragment");
 }
 
+TEST(UrlParserTest, ParseUrlStrangeScheme) {
+    UrlParser parser("Ht13t.p3+2.4://example.com/path?query#fragment");
+
+    EXPECT_EQ(parser.getScheme(), "Ht13t.p3+2.4");
+    EXPECT_EQ(parser.getLogin(), "");
+    EXPECT_EQ(parser.getPassword(), "");
+    EXPECT_EQ(parser.getHost(), "example.com");
+    EXPECT_EQ(parser.getPort(), "");
+    EXPECT_EQ(parser.getPath(), "/path");
+    EXPECT_EQ(parser.getQuery(), "query");
+    EXPECT_EQ(parser.getFragment(), "fragment");
+}
+
+TEST(UrlParserTest, ParseUrlBadScheme) {
+    try {
+        UrlParser parser("ht,tp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("ht tp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("%http://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("htt(p://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("http:://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("ht}tp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("ht*tp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("h^ttp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("http&://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("ht#tp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+
+    try {
+        UrlParser parser("h@ttp://example.com/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
+}
+
 TEST(UrlParserTest, ParseUrlWithPort) {
     UrlParser parser("http://example.com:8080/path?query#fragment");
 
