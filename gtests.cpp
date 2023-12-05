@@ -68,16 +68,16 @@ TEST(UrlParserTest, ParseUrlSomeSite) {
 }
 
 TEST(UrlParserTest, ParseUrlEmptyScheme) {
-    UrlParser parser("://login:password@example.com:8080/path?query#fragment");
-
-    EXPECT_EQ(parser.getScheme(), "");
-    EXPECT_EQ(parser.getLogin(), "login");
-    EXPECT_EQ(parser.getPassword(), "password");
-    EXPECT_EQ(parser.getHost(), "example.com");
-    EXPECT_EQ(parser.getPort(), "8080");
-    EXPECT_EQ(parser.getPath(), "/path");
-    EXPECT_EQ(parser.getQuery(), "query");
-    EXPECT_EQ(parser.getFragment(), "fragment");
+    try {
+        UrlParser parser("://login:password@example.com:8080/path?query#fragment");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing scheme"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
 }
 
 TEST(UrlParserTest, ParseUrlYandexSlash) {
@@ -89,15 +89,28 @@ TEST(UrlParserTest, ParseUrlYandexSlash) {
 }
 
 TEST(UrlParserTest, ParseUrlYandex) {
-    UrlParser parser("https://ya.ru");
-
-    EXPECT_EQ(parser.getScheme(), "https");
-    EXPECT_EQ(parser.getHost(), "ya.ru");
-    EXPECT_EQ(parser.getPath(), "");
+    try {
+        UrlParser parser("https://ya.ru");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing path"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
 }
 
 TEST(UrlParserTest, ParseUrlOnlyScheme) {
-    UrlParser parser("https://");
-    EXPECT_EQ(parser.getScheme(), "https");
+    try {
+        UrlParser parser("https://");
+        FAIL() << "Expected std::invalid_argument";
+    }
+    catch(std::invalid_argument const & err) {
+        EXPECT_EQ(err.what(),std::string("Invalid URL: Missing host"));
+    }
+    catch(...) {
+        FAIL() << "Expected std::invalid_argument";
+    }
 }
 
